@@ -42,7 +42,7 @@ function User(name, login) {
         throw new Error('User must have a non-empty name');
     }
     this.name = name;
-    this.login = login || name.replace(/ /g, '.').toLowerCase();
+    this.login = login || name;
     this.login = this.login.replace(/[\s\/]/g, '.').toLowerCase();
     this.groupIds = [];
 }

@@ -87,7 +87,7 @@ On each file-change in `src` or `spec` it recompiles
 the the whole source with browserify, and runs the Jasmine
 tests. This way I can instantly see I'm breaking something.
 
-All libraries needed for development are installed using *npm*
+All libraries needed for development are installed using **npm**
 
 ### Backend
 
@@ -116,7 +116,7 @@ It's more an integration and development helper than a test,
 just aiding me to check the functionality.
 
 All libraries needed for deployemnt and development
-are installed using *composer*
+are installed using **composer**
 
 ## Running application
 
@@ -159,4 +159,3 @@ Common tasks:
     grunt browserify             # generates www/build/uman.js
     grunt grunt jasmine-verbose  # run unit-tests
     grunt watch                  # watches changes, and does both of above on change
-
