@@ -1,0 +1,11 @@
+{
+    "name": "uman-frontend",
+    "dependencies": {
+      "browserify": "*",
+      "grunt": "*",
+      "grunt-shell": "*",
+      "grunt-contrib-watch": "*",
+      "grunt-env": "*",
+      "jasmine-node": "*"
+    }
+}

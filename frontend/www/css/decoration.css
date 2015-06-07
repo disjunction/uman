@@ -1,0 +1,30 @@
+.bs-docs-header {
+    background-color: #6f5499;
+    background-image: linear-gradient(to bottom, #789aa7 0px, #a5b6be 100%);
+    background-repeat: repeat-x;
+    color: #fff;
+    padding: 20px 0;
+    position: relative;
+    text-align: left;
+    text-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+.bs-docs-container {
+    margin-top: 20px;
+}
+
+.anchor-pointer {
+    cursor: pointer;
+}
+
+.tab-pane {
+    padding-top: 20px;
+}
+
+table {
+    margin-top: 20px;
+}
+
+thead {
+    font-weight: bold;
+}

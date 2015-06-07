@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/decoration.css">
+    <link rel="stylesheet" href="css/bootstrap-multiselect.css">
+    <script src="lib/jquery-2.1.4.min.js"></script>
+    <script src="lib/bootstrap.min.js"></script>
+    <script src="lib/bootstrap-multiselect.js"></script>
+    <script src="lib/knockout-min.js"></script>
+    <script src="build/uman.js"></script>
+</head>
+<body>
+    <div class="bs-docs-header" id="content" tabindex="-1">
+      <div class="container">
+        <h1>Uman :)</h1>
+        <p>User MANagement test application</p>
+      </div>
+    </div>
+
+    <div class="container bs-docs-container">
+
+        <ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
+            <li class="active"><a href="#users" data-toggle="tab">Users</a></li>
+            <li><a href="#groups" data-toggle="tab">Groups</a></li>
+        </ul>
+        <div id="my-tab-content" class="tab-content">
+
+            <!-- TAB: Users -->
+
+            <div class="tab-pane active" id="users">
+                <button data-bind="click:singleUserModal.showEmpty" type="submit" class="btn btn-primary">Add User</button>
+
+                <table class="table table-striped container">
+                    <thead>
+                        <tr>
+                            <td class="col-md-5">User</td>
+                            <td class="col-md-5">Groups</td>
+                            <td class="col-md-2"></td>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach: userTable">
+                        <tr>
+                            <td>
+                                <a class="anchor-pointer" data-bind="click:showEdit">
+                                    <span data-bind="text: name"></span>
+                                    (<span data-bind="text: login"></span>)
+                                </a>
+                            </td>
+                            <td >
+                                <span data-bind="foreach: groupIds">
+                                    <span data-bind="text: $data" class="badge"></span>
+                                </span>
+                            </td>
+                            <td>
+                                <button data-bind="click:remove" type="button" class="btn btn-danger">Remove User</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+
+            <!-- TAB: Groups -->
+
+            <div class="tab-pane" id="groups">
+                <button data-bind="click:singleGroupModal.showEmpty" type="submit" class="btn btn-primary">Add Group</button>
+
+                <table class="table table-striped container">
+                    <thead>
+                        <tr>
+                            <td class="col-md-4">Group</td>
+                            <td class="col-md-4">Members</td>
+                            <td class="col-md-2"></td>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach: groupTable">
+                        <tr>
+                            <td data-bind="text: name"></td>
+                            <td data-bind="text: memberCountObservable"></td>
+                            <td data-bind="if: removePossible">
+                                <button data-bind="click: remove" type="button" class="btn btn-danger">Remove Group</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+    <div data-bind="with: singleUserModal" id="single-user-modal" class="modal fade">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Add/Edit User</h4>
+          </div>
+          <div class="modal-body"  class="container">
+            <form id="single-user-form" class="form-horizontal">
+                <div class="form-group row">
+                    <label for="single-user-name" class="col-md-4 control-label">Full Name</label>
+                    <div class="col-md-8">
+                        <input data-bind="value:name" class="form-control" id="single-user-name" placeholder="John Doe">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="single-user-name" class="col-md-4 control-label">Login (optional)</label>
+                    <div class="col-md-8">
+                        <input data-bind="value:login" class="form-control" id="single-user-login" placeholder="j.doe">
+
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="single-user-groups" class="col-md-4 control-label">Groups</label>
+                    <div class="col-md-8">
+                        <select class="bs-multiselect" multiple="multiple">
+                        </select>
+                    </div>
+                </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button data-bind="click:save" type="button" class="btn btn-primary">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div data-bind="with: singleGroupModal" id="single-group-modal" class="modal fade">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Add Group</h4>
+          </div>
+          <div class="modal-body"  class="container">
+            <form id="single-group-form" class="form-horizontal">
+                <div class="form-group row">
+                    <label for="single-group-name" class="col-md-4 control-label">Group Name</label>
+                    <div class="col-md-8">
+                        <input data-bind="value:name" class="form-control" id="single-group-name" placeholder="Good Users">
+                    </div>
+                </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button data-bind="click:save" type="button" class="btn btn-primary">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+    $(document).ready(function(){
+        var groupMultiselect = $('.bs-multiselect');
+        groupMultiselect.multiselect();
+
+        // local aliases
+        var User = uman.entity.User,
+            Group = uman.entity.Group;
+
+        // init and export app to uman namespace
+        var app = uman.app = new (function() {
+            if (location.search == '?remote') {
+                var baseUrl = 'http://' + location.host + ':8000';
+                this.userStorage = new uman.storage.RemoteStorage($, baseUrl + '/users', uman.entity.User);
+                this.groupStorage = new uman.storage.RemoteStorage($, baseUrl + '/groups', uman.entity.Group);
+            } else {
+                this.userStorage = new uman.storage.LocalUserStorage('uman.users', uman.entity.User);
+                this.userStorage.save(new User('Some Name'));
+                this.userStorage.getById('some.name', function(user) {
+                    user.groupIds=['Important'];
+                })
+                this.userStorage.save(new User('Some Other Guy'));
+
+                this.groupStorage = new uman.storage.LocalGroupStorage('uman.groups', uman.entity.Group, this.userStorage)
+                this.groupStorage.save(new Group('Important'));
+            }
+        })();
+
+        ////////////////////////////////////////
+        // knockout VM part
+        ////////////////////////////////////////
+
+        function ViewModel() {
+            var self = this;
+            self.notifier = ko.observable();
+
+            ///////////////////////////////////////
+            // helper functions feeding KO VM
+            ///////////////////////////////////////
+
+            /**
+             * shortcut for updating both users and groups
+             */
+            function updateTables() {
+                updateUserTable();
+                updateGroupTable();
+            }
+
+            /**
+             * abit of a hack around boostrap-multiselect
+             * @param  {Array.<string>} groupIds
+             */
+            function rebuildGroupSelect(groupIds) {
+                groupMultiselect.empty();
+                var select = groupMultiselect[0];
+
+                app.groupStorage.getAll(function(groups){
+                    groups.map(function(group) {
+                        var opt = new Option(group.name, group.getId());
+                        if (groupIds.indexOf(opt.value) != -1) {
+                            opt.selected = true;
+                        }
+                        select.add(opt);
+                    });
+                    groupMultiselect.multiselect('rebuild');
+                });
+            }
+
+            /**
+             * get users from userStorage,extend them with addition VM methods,
+             * and push them to KO observableArray
+             */
+            function updateUserTable() {
+                app.userStorage.getAll(function(users){
+                    self.userTable.removeAll();
+                    users.map(function(user) {
+                        user.remove = function() {
+                            app.userStorage.remove(user, function() {
+                                updateTables();
+                            });
+                        }
+                        user.showEdit = function(model) {
+                            self.singleUserModal.name(model.name);
+                            self.singleUserModal.login(model.login);
+                            rebuildGroupSelect(model.groupIds);
+                            $('#single-user-modal').modal();
+                        }
+                    });
+                    ko.utils.arrayPushAll(self.userTable, users);
+                });
+            }
+
+            /**
+             * get groups from groupStorage,extend them with addition VM methods,
+             * and push them to KO observableArray
+             */
+            function updateGroupTable() {
+                app.groupStorage.getAll(function(groups) {
+                    self.groupTable.removeAll();
+                    groups.map(function(group) {
+                        if (group.memberCountObservable) {
+                            group.memberCountObservable(group.memberCount);
+                        } else {
+                            group.memberCountObservable = ko.observable(group.memberCount);
+                        }
+
+                        group.remove = function() {
+                            app.groupStorage.remove(group, function() {
+                                updateGroupTable();
+                            });
+                        };
+
+                        group.removePossible = (group.memberCount === 0);
+                    });
+                    ko.utils.arrayPushAll(self.groupTable, groups);
+                });
+            }
+
+            ///////////////////////////////////////
+            // knockout bindings
+            ///////////////////////////////////////
+
+            // modal dialog for adding/editing a user
+            self.singleUserModal = {
+                login: ko.observable(),
+                name: ko.observable(),
+                save: function(model) {
+                    var user = new User(model.name(), model.login());
+                    user.groupIds = groupMultiselect.val() ? groupMultiselect.val() : [];
+                    app.userStorage.save(user);
+                    updateTables();
+                    $('#single-user-modal').modal('hide');
+                },
+                showEmpty: function(model) {
+                    model.singleUserModal.login(null);
+                    model.singleUserModal.name(null);
+                    rebuildGroupSelect([]);
+                    $('#single-user-modal').modal();
+                }
+            };
+
+            // modal dialog for adding groups
+            self.singleGroupModal = {
+                name: ko.observable(),
+                save: function(model) {
+                    var group = new Group(model.name());
+                    app.groupStorage.save(group);
+                    updateTables();
+                    $('#single-group-modal').modal('hide');
+                },
+                showEmpty: function(model) {
+                    model.singleGroupModal.name(null);
+                    $('#single-group-modal').modal();
+                }
+            };
+
+            self.groupTable = ko.observableArray();
+            self.userTable = ko.observableArray();
+
+            updateTables();
+        }
+        ko.applyBindings(new ViewModel());
+    });
+    </script>
+</body>
+</html>
